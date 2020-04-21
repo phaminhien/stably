@@ -1,0 +1,11 @@
+config:
+  binance:
+    depthApi: https://dex.binance.org/api/v1/depth
+  symbol:
+    path: C:/Users/pmh/examples/stably/config/symbols.txt
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: stably

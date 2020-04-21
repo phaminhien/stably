@@ -1,0 +1,41 @@
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <title>Stably</title>
+</head>
+<body>
+    <form th:action="@{/}" th:object="${formRequest}" method="post">
+        <label for="symbol">Symbol</label>
+        <input type="text" th:field="*{symbol}" id="symbol" >
+        <label for="interval">Interval (minutes):</label>
+        <input type="number" th:field="*{interval}" id="interval">
+        <label for="duration">Duration (last n days):</label>
+        <input type="number" th:field="*{duration}" id="duration">
+        <button type="submit">Submit</button>
+    </form>
+<p>Bid ask spread result...</p>
+<table>
+    <thead>
+        <tr>
+            <th>Bid Price</th>
+            <th>Ask Price</th>
+            <th>Bid/Ask Spread</th>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:if="${list.empty}">
+            <td colspan="5">No data available</td>
+        </tr>
+    <tr th:each="data: ${list}">
+        <td><span th:text="${data.bidPrice}"></span></td>
+        <td><span th:text="${data.askPrice}"></span></td>
+        <td><span th:text="${data.spread}"></span></td>
+        <td><span th:text="${data.start}"></span></td>
+        <td><span th:text="${data.end}"></span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>
