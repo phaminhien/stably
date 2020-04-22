@@ -1,21 +1,35 @@
 <html xmlns:th="https://www.thymeleaf.org" lang="en">
 <head>
     <title>Stably</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <form th:action="@{/}" th:object="${request}" method="post">
-        <label for="symbol">Currency pair:</label>
-        <select th:field="*{symbol}" id="symbol">
-            <option th:each="s: ${symbols}" th:value="${s}" th:text="${s}"></option>
-        </select>
-        <label for="interval">Interval (minutes):</label>
-        <input type="number" th:field="*{interval}" id="interval">
-        <label for="duration">Duration (last n days):</label>
-        <input type="number" th:field="*{duration}" id="duration">
-        <button type="submit">Submit</button>
+<div class="container">
+    <form th:action="@{/}" method="get">
+        <div class="row mt-3">
+            <div class="form-group col-md">
+                <label for="symbol">Symbol</label>
+                <select th:name="symbol" id="symbol" class="form-control">
+                    <option th:each="s: ${symbols}" th:value="${s}" th:text="${s}"></option>
+                </select>
+            </div>
+            <div class="form-group col-md">
+                <label for="interval">Interval (minutes)</label>
+                <input type="number" min="1" th:name="interval" th:value="${interval}" id="interval" class="form-control">
+            </div>
+            <div class="form-group col-md">
+                <label for="duration">Duration (last n days)</label>
+                <input type="number" min="1" th:name="duration" th:value="${duration}" id="duration" class="form-control">
+            </div>
+            <div class="form-group col-md">
+                <br>
+                <button type="submit" class="btn btn-lg btn-primary">Submit</button>
+            </div>
+        </div>
     </form>
-<table th:if="${prices != null}">
-    <thead>
+    <table th:if="${prices != null}" class="table table-hover text-center mt-5">
+        <thead class="thead-dark">
         <tr>
             <th>Bid Price</th>
             <th>Ask Price</th>
@@ -23,19 +37,24 @@
             <th>Percentage</th>
             <th>Date & Time</th>
         </tr>
-    </thead>
-    <tbody>
-    <tr th:if="${prices?.empty}">
-        <td colspan="5">No data available</td>
-    </tr>
-        <tr th:each="price: ${prices}">
-            <td><span th:text="${price.bid}"></span></td>
-            <td><span th:text="${price.ask}"></span></td>
-            <td><span th:text="${price.spread}"></span></td>
-            <td><span th:text="${#numbers.formatDecimal(price.spread / price.ask * 100, 1, 2)}"></span></td>
-            <td><span th:text="${#temporals.format(price.createdOn, 'dd/MM/yyyy HH:mm:ss')}"></span></td>
+        </thead>
+        <tbody>
+        <tr th:if="${prices.empty}">
+            <td colspan="5">No data available</td>
         </tr>
-    </tbody>
-</table>
+        <tr th:each="price: ${prices}">
+            <td><span th:text="${price.bid.toPlainString()}"></span></td>
+            <td><span th:text="${price.ask.toPlainString()}"></span></td>
+            <td><span th:text="${price.ask.subtract(price.bid).toPlainString()}"></span></td>
+            <td><span th:text="${#numbers.formatDecimal((price.ask - price.bid) / price.ask * 100, 1, 2)}"></span></td>
+            <td><span th:text="${#temporals.format(price.createdOn, 'HH:mm:ss dd/MM/yyyy')}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-center mb-5">
+        <a th:hidden="${page <= 0}" th:href="@{/(symbol=${symbol},interval=${interval},duration=${duration},page=${page - 1},size=${size})}" class="btn btn-secondary mx-2">&#60; Prev</a>
+        <a th:hidden="${totalPage == 0 or page >= totalPage - 1}" th:href="@{/(symbol=${symbol},interval=${interval},duration=${duration},page=${page + 1},size=${size})}" class="btn btn-secondary mx-2">Next &#62;</a>
+    </div>
+</div>
 </body>
 </html>

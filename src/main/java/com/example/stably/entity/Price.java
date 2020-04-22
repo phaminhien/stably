@@ -14,6 +14,5 @@ public class Price {
     String symbol;
     BigDecimal bid;
     BigDecimal ask;
-    BigDecimal spread;
     LocalDateTime createdOn;
 }
