@@ -1,42 +1,55 @@
 package com.example.stably.service;
 
+import com.example.stably.dto.FormRequest;
 import com.example.stably.dto.MarketDepth;
 import com.example.stably.entity.Price;
 import com.example.stably.repository.PriceRepository;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
+@Slf4j
 public class PriceService {
     private final PriceRepository priceRepository;
     private final BinanceService binanceService;
+    private final ConfigService configService;
 
-    @Value("${config.symbol.path}")
-    private String symbolConfig;
-
-    public PriceService(PriceRepository priceRepository, BinanceService binanceService) {
+    public PriceService(PriceRepository priceRepository, BinanceService binanceService, ConfigService configService) {
         this.priceRepository = priceRepository;
         this.binanceService = binanceService;
+        this.configService = configService;
+    }
+
+    public List<Price> retrievePriceList(FormRequest request) {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusMinutes(request.getInterval());
+        LocalDateTime origin = end.minusDays(request.getDuration());
+        List<Price> prices = new ArrayList<>();
+        while (start.isAfter(origin) || start.isEqual(origin)) {
+            Price price = priceRepository.findFirstBySymbolAndCreatedOnBetweenOrderByCreatedOnDesc(request.getSymbol(), start, end);
+            if (price != null) prices.add(price);
+            end = start;
+            start = start.minusMinutes(request.getInterval());
+        }
+        return prices;
     }
 
     @Scheduled(fixedRate = 60000)
     public void populateData() throws FileNotFoundException {
-        File file = new File(symbolConfig);
-        Scanner scanner = new Scanner(file);
-        while (scanner.hasNext()) {
-            String symbol = scanner.next();
+        List<String> symbols = configService.retrieveSymbols();
+        symbols.forEach(symbol -> {
             MarketDepth marketDepth = binanceService.retrieveMarketDepth(symbol);
             Price price = createPrice(marketDepth);
             price.setSymbol(symbol);
             priceRepository.save(price);
-        }
+        });
     }
 
     private Price createPrice(MarketDepth marketDepth) {

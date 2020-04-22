@@ -3,39 +3,39 @@
     <title>Stably</title>
 </head>
 <body>
-    <form th:action="@{/}" th:object="${formRequest}" method="post">
-        <label for="symbol">Symbol</label>
-        <input type="text" th:field="*{symbol}" id="symbol" >
+    <form th:action="@{/}" th:object="${request}" method="post">
+        <label for="symbol">Currency pair:</label>
+        <select th:field="*{symbol}" id="symbol">
+            <option th:each="s: ${symbols}" th:value="${s}" th:text="${s}"></option>
+        </select>
         <label for="interval">Interval (minutes):</label>
         <input type="number" th:field="*{interval}" id="interval">
         <label for="duration">Duration (last n days):</label>
         <input type="number" th:field="*{duration}" id="duration">
         <button type="submit">Submit</button>
     </form>
-<p>Bid ask spread result...</p>
-<table>
+<table th:if="${prices != null}">
     <thead>
         <tr>
             <th>Bid Price</th>
             <th>Ask Price</th>
-            <th>Bid/Ask Spread</th>
-            <th>From</th>
-            <th>To</th>
+            <th>Spread</th>
+            <th>Percentage</th>
+            <th>Date & Time</th>
         </tr>
     </thead>
     <tbody>
-        <tr th:if="${list.empty}">
-            <td colspan="5">No data available</td>
-        </tr>
-    <tr th:each="data: ${list}">
-        <td><span th:text="${data.bidPrice}"></span></td>
-        <td><span th:text="${data.askPrice}"></span></td>
-        <td><span th:text="${data.spread}"></span></td>
-        <td><span th:text="${data.start}"></span></td>
-        <td><span th:text="${data.end}"></span></td>
+    <tr th:if="${prices?.empty}">
+        <td colspan="5">No data available</td>
     </tr>
+        <tr th:each="price: ${prices}">
+            <td><span th:text="${price.bid}"></span></td>
+            <td><span th:text="${price.ask}"></span></td>
+            <td><span th:text="${price.spread}"></span></td>
+            <td><span th:text="${#numbers.formatDecimal(price.spread / price.ask * 100, 1, 2)}"></span></td>
+            <td><span th:text="${#temporals.format(price.createdOn, 'dd/MM/yyyy HH:mm:ss')}"></span></td>
+        </tr>
     </tbody>
 </table>
 </body>
-
 </html>
