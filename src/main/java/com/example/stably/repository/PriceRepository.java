@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface PriceRepository extends MongoRepository<Price, Integer> {
     Page<Price> findBySymbolAndCreatedOnIn(String symbol, List<LocalDateTime> dateTimes, Pageable pageable);
-    Optional<Price> findByCreatedOn(LocalDateTime createdOn);
+    Optional<Price> findBySymbolAndCreatedOn(String Symbol, LocalDateTime createdOn);
 }

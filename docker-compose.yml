@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+    - "8080:8080"
+    volumes:
+    - "./config:/app/config"
+    depends_on:
+      - db
+  db:
+    image: "mongo:4.2.6-bionic"
+    volumes:
+    - "mongoData:/data/db"
+volumes:
+  mongoData:

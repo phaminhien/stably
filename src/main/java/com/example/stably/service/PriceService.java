@@ -54,7 +54,7 @@ public class PriceService {
             if (marketDepth.getAsks().size() > 0 || marketDepth.getBids().size() > 0) {
                 Price price = createPrice(marketDepth);
                 price.setSymbol(symbol);
-                Optional<Price> priceOptional = priceRepository.findByCreatedOn(price.getCreatedOn());
+                Optional<Price> priceOptional = priceRepository.findBySymbolAndCreatedOn(symbol, price.getCreatedOn());
                 if (!priceOptional.isPresent()) {
                     priceRepository.save(price);
                 }

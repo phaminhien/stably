@@ -1,3 +1,11 @@
+config:
+  binance:
+    depthApi: https://dex.binance.org/api/v1/depth
+  symbol:
+    path: ./config/symbols.txt
 spring:
-  profiles:
-    active: local
+  data:
+    mongodb:
+      host: db
+      port: 27017
+      database: stably

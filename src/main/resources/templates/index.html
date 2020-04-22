@@ -16,11 +16,11 @@
             </div>
             <div class="form-group col-md">
                 <label for="interval">Interval (minutes)</label>
-                <input type="number" min="1" th:name="interval" th:value="${interval}" id="interval" class="form-control">
+                <input type="number" min="1" max="720" th:name="interval" th:value="${interval}" id="interval" class="form-control">
             </div>
             <div class="form-group col-md">
                 <label for="duration">Duration (last n days)</label>
-                <input type="number" min="1" th:name="duration" th:value="${duration}" id="duration" class="form-control">
+                <input type="number" min="1" max="90" th:name="duration" th:value="${duration}" id="duration" class="form-control">
             </div>
             <div class="form-group col-md">
                 <br>

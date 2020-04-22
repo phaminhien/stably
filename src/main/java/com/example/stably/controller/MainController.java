@@ -29,7 +29,10 @@ public class MainController {
                         @RequestParam(defaultValue = "0") Integer page,
                         @RequestParam(defaultValue = "10") Integer size,
                         Model model) throws FileNotFoundException {
-        if (!StringUtils.isEmpty(symbol) && interval > 0 && duration > 0) {
+        boolean isInputValid = !StringUtils.isEmpty(symbol)
+                && interval > 0 && interval <= 720
+                && duration > 0 && duration <= 90;
+        if (isInputValid) {
             Page<Price> pricePage = priceService.retrievePriceList(symbol, interval, duration, page, size);
             model.addAttribute("prices", pricePage.getContent());
             model.addAttribute("totalPage", pricePage.getTotalPages());
