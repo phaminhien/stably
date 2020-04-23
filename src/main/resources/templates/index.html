@@ -11,7 +11,7 @@
             <div class="form-group col-md">
                 <label for="symbol">Symbol</label>
                 <select th:name="symbol" id="symbol" class="form-control">
-                    <option th:each="s: ${symbols}" th:value="${s}" th:text="${s}"></option>
+                    <option th:each="s: ${symbols}" th:value="${s}" th:text="${s}" th:selected="${symbol == s}"></option>
                 </select>
             </div>
             <div class="form-group col-md">

@@ -49,7 +49,7 @@ public class PriceService {
     public void populateData() throws FileNotFoundException {
         List<String> symbols = configService.retrieveSymbols();
         log.info("Saving bid ask price info for list of symbols: {}", symbols.toString());
-        symbols.forEach(symbol -> {
+        symbols.parallelStream().forEach(symbol -> {
             MarketDepth marketDepth = binanceService.retrieveMarketDepth(symbol);
             if (marketDepth.getAsks().size() > 0 || marketDepth.getBids().size() > 0) {
                 Price price = createPrice(marketDepth);
